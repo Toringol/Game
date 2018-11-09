@@ -14,7 +14,7 @@
 
 class Entity {
 public:
-	std::vector<Object> obj;//вектор объектов карты
+	std::vector<Object> obj;
 	float dx, dy, x, y, speed, moveTimer;
 	int w, h, health;
 	bool life, isMove;
@@ -30,18 +30,18 @@ public:
 		sprite.setOrigin(w / 2, h / 2);
 	}
 
-	FloatRect getRect() {//ф-ция получения прямоугольника. его коорд,размеры (шир,высот).
-		return FloatRect(x, y, w, h);//эта ф-ция нужна для проверки столкновений 
+	FloatRect getRect() {
+		return FloatRect(x, y, w, h);
 	}
 };
-////////////////////////////////////////////////////КЛАСС ИГРОКА////////////////////////
+
 class Player :public Entity {
 public:
 	enum { left, right, up, down, jump, stay } state;
 	int playerScore;
 
 	Player(Image &image, String Name, Level &lvl, float X, float Y, int W, int H) :Entity(image, Name, X, Y, W, H) {
-		playerScore = 0; state = stay; obj = lvl.GetAllObjects();//инициализируем.получаем все объекты для взаимодействия персонажа с картой
+		playerScore = 0; state = stay; obj = lvl.GetAllObjects();
 		if (name == "player") {
 			sprite.setTextureRect(IntRect(0, 0, w, h));
 		}
@@ -119,10 +119,10 @@ public:
 
 	void checkCollisionWithMap(float Dx, float Dy)
 	{
-		for (int i = 0; i < obj.size(); i++)//проходимся по объектам
-			if (getRect().intersects(obj[i].rect))//проверяем пересечение игрока с объектом
+		for (int i = 0; i < obj.size(); i++)
+			if (getRect().intersects(obj[i].rect))
 			{
-				if (obj[i].name == "solid"){//если встретили препятствие (объект с именем solid)
+				if (obj[i].name == "solid") {
 				if (Dy > 0) { y = obj[i].rect.top - h;  dy = 0; }
 				if (Dy < 0) { y = obj[i].rect.top + obj[i].rect.height;   dy = 0; }
 				if (Dx > 0) { x = obj[i].rect.left - w;  dx = -0.1; sprite.scale(-1, 1); }

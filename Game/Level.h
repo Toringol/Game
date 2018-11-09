@@ -10,7 +10,6 @@
 #include <map>
 #include <SFML/Graphics.hpp>
 
-// some change
 using namespace std;
 using namespace sf;
 

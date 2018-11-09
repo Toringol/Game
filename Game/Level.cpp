@@ -195,7 +195,7 @@ bool Level::LoadFromFile(string filename)
 				object.type = objectType;
 				object.sprite = sprite;
 
-				Rect <int> objectRect;
+				Rect <float> objectRect;
 				objectRect.top = y;
 				objectRect.left = x;
 				objectRect.height = height;
@@ -253,6 +253,11 @@ vector<Object> Level::GetObjects(string name)
 
 	return vec;
 }
+
+std::vector<Object> Level::GetAllObjects()
+{
+	return objects;
+};
 
 Vector2i Level::GetTileSize()
 {

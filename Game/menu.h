@@ -10,6 +10,138 @@
 #include "ResourceHolder.h"
 #include "Resourceidentifiers.h"
 #include "Level.h"
+#include "view.h"
+
+class Entity {
+public:
+	std::vector<Object> obj;//вектор объектов карты
+	float dx, dy, x, y, speed, moveTimer;
+	int w, h, health;
+	bool life, isMove;
+	Texture texture;
+	Sprite sprite;
+	String name;
+	Entity(Image &image, String Name, float X, float Y, int W, int H) {
+		x = X; y = Y; w = W; h = H; name = Name; moveTimer = 0;
+		speed = 0; health = 100; dx = 0; dy = 0;
+		life = true; isMove = false;
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+		sprite.setOrigin(w / 2, h / 2);
+	}
+
+	FloatRect getRect() {//ф-ция получения прямоугольника. его коорд,размеры (шир,высот).
+		return FloatRect(x, y, w, h);//эта ф-ция нужна для проверки столкновений 
+	}
+};
+////////////////////////////////////////////////////КЛАСС ИГРОКА////////////////////////
+class Player :public Entity {
+public:
+	enum { left, right, up, down, jump, stay } state;
+	int playerScore;
+
+	Player(Image &image, String Name, Level &lvl, float X, float Y, int W, int H) :Entity(image, Name, X, Y, W, H) {
+		playerScore = 0; state = stay; obj = lvl.GetAllObjects();//инициализируем.получаем все объекты для взаимодействия персонажа с картой
+		if (name == "player") {
+			sprite.setTextureRect(IntRect(0, 0, w, h));
+		}
+	}
+
+	void control() {
+		if (Keyboard::isKeyPressed) {
+			if (Keyboard::isKeyPressed(Keyboard::Left)) {
+				state = left; speed = 0.1;
+			}
+			if (Keyboard::isKeyPressed(Keyboard::Right)) {
+				state = right; speed = 0.1;
+			}
+
+			if (Keyboard::isKeyPressed(Keyboard::Up)) {
+				state = jump; dy = -0.1;
+			}
+
+			if (Keyboard::isKeyPressed(Keyboard::Down)) {
+				state = jump; dy = 0.1;
+			}
+		}
+	}
+
+	void checkCollisionWithMap(float Dx, float Dy)
+	{
+		for (int i = 0; i < obj.size(); i++)
+			if (getRect().intersects(obj[i].rect))
+			{
+				if (obj[i].name == "solid")
+				{
+					if (Dy > 0) { y = obj[i].rect.top - h;  dy = 0; }
+					if (Dy < 0) { y = obj[i].rect.top + obj[i].rect.height;   dy = 0; }
+					if (Dx > 0) { x = obj[i].rect.left - w; }
+					if (Dx < 0) { x = obj[i].rect.left + obj[i].rect.width; }
+				}
+			}
+	}
+
+	void update(float time)
+	{
+		control();
+		switch (state)
+		{
+		case right: dx = speed; break;
+		case left: dx = -speed; break;
+		case up: dy = speed; break;
+		case down: dy = speed; break;
+		case stay: break;
+		}
+		x += dx * time;
+		checkCollisionWithMap(dx, 0);
+		y += dy * time;
+		checkCollisionWithMap(0, dy);
+		sprite.setPosition(x + w / 2, y + h / 2);
+		if (health <= 0) { life = false; }
+		if (!isMove) { speed = 0; }
+		setPlayerCoordinateForView(x, y);
+		if (life) { setPlayerCoordinateForView(x, y); }
+		//dy = dy + 0.0015 * time;
+	}
+};
+
+
+
+class Enemy :public Entity {
+public:
+	Enemy(Image &image, String Name, Level &lvl, float X, float Y, int W, int H) :Entity(image, Name, X, Y, W, H) {
+		obj = lvl.GetObjects("solid");
+		if (name == "EasyEnemy") {
+			sprite.setTextureRect(IntRect(0, 0, w, h));
+			dx = 0.1;
+		}
+	}
+
+	void checkCollisionWithMap(float Dx, float Dy)
+	{
+		for (int i = 0; i < obj.size(); i++)//проходимся по объектам
+			if (getRect().intersects(obj[i].rect))//проверяем пересечение игрока с объектом
+			{
+				if (obj[i].name == "solid"){//если встретили препятствие (объект с именем solid)
+				if (Dy > 0) { y = obj[i].rect.top - h;  dy = 0; }
+				if (Dy < 0) { y = obj[i].rect.top + obj[i].rect.height;   dy = 0; }
+				if (Dx > 0) { x = obj[i].rect.left - w;  dx = -0.1; sprite.scale(-1, 1); }
+				if (Dx < 0) { x = obj[i].rect.left + obj[i].rect.width; dx = 0.1; sprite.scale(-1, 1); }
+				}
+			}
+	}
+
+	void update(float time)
+	{
+		if (name == "EasyEnemy") {
+			checkCollisionWithMap(dx, 0);
+			x += dx * time;
+			sprite.setPosition(x + w / 2, y + h / 2);
+			if (health <= 0) { life = false; }
+		}
+	}
+};
+
 
 void menu(sf::RenderWindow & window) {
 
@@ -43,12 +175,12 @@ void menu(sf::RenderWindow & window) {
 		menuNum = 0;
 		window.clear(sf::Color::White);
 
-		if (sf::IntRect(30, 550, 160, 45).contains(sf::Mouse::getPosition(window))) {
+		if (sf::IntRect(30, 550, 160, 40).contains(sf::Mouse::getPosition(window))) {
 			spriteNewGame.setColor(sf::Color(135, 34, 34));
 			menuNum = 1;
 		}
 
-		if (sf::IntRect(30, 590, 125, 45).contains(sf::Mouse::getPosition(window))) {
+		if (sf::IntRect(30, 590, 115, 40).contains(sf::Mouse::getPosition(window))) {
 			spriteOptions.setColor(sf::Color(135, 34, 34));
 			menuNum = 2;
 		}
@@ -63,10 +195,25 @@ void menu(sf::RenderWindow & window) {
 			if (menuNum == 1) {
 				Level level;
 				level.LoadFromFile("map.tmx");
+				
+				Image heroImage;
+				heroImage.loadFromFile("player.png");
+
+				Object player = level.GetObject("player");
+
+				Player p(heroImage, "player", level, player.rect.left, player.rect.top, 32, 32);
+
+				Clock clock;
 
 				window.create(sf::VideoMode(1280, 800), "Level - 1");
 
 				while (window.isOpen()) {
+
+					float time = clock.getElapsedTime().asMicroseconds();
+
+					clock.restart();
+					time = time / 800;
+
 					sf::Event event;
 
 					while (window.pollEvent(event))
@@ -74,9 +221,10 @@ void menu(sf::RenderWindow & window) {
 						if (event.type == sf::Event::Closed)
 							window.close();
 					}
-
+					p.update(time);
 					window.clear();
 					level.Draw(window);
+					window.draw(p.sprite);
 					window.display();
 				}
 

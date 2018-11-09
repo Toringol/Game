@@ -21,7 +21,7 @@ struct Object
 	string GetPropertyString(string name);
 	string name;
 	string type;
-	Rect<int> rect;
+	Rect<float> rect;
 	map<string, string> properties;
 	Sprite sprite;
 };
@@ -38,6 +38,7 @@ public:
 	bool LoadFromFile(string filename);
 	Object GetObject(string name);
 	vector<Object> GetObjects(string name);
+	std::vector<Object> GetAllObjects();
 	void Draw(RenderWindow &window);
 	Vector2i GetTileSize();
 

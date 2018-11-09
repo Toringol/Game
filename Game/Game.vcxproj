@@ -141,12 +141,14 @@
     <ClCompile Include="TinyXML\tinyxmlparser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Box2D\Box2D.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="ResourceHolder.h" />
     <ClInclude Include="Resourceidentifiers.h" />
     <ClInclude Include="TinyXML\tinystr.h" />
     <ClInclude Include="TinyXML\tinyxml.h" />
+    <ClInclude Include="view.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="BackGround.jpg" />
@@ -154,6 +156,8 @@
     <Image Include="Exit.png" />
     <Image Include="NewGame.png" />
     <Image Include="Options.png" />
+    <Image Include="player.jpg" />
+    <Image Include="player.png" />
     <Image Include="tileset.png" />
   </ItemGroup>
   <ItemGroup>

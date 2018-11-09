@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Исходные файлы">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Файлы ресурсов\Data">
+      <UniqueIdentifier>{9d19b6c6-41c7-4567-97c5-586d51370157}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\TinyXML">
+      <UniqueIdentifier>{cf11c0b5-8660-4f69-9cae-7cb70d825903}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinystr.cpp">
+      <Filter>Файлы ресурсов\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxml.cpp">
+      <Filter>Файлы ресурсов\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxmlerror.cpp">
+      <Filter>Файлы ресурсов\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxmlparser.cpp">
+      <Filter>Файлы ресурсов\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="Level.cpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ResourceHolder.h">
+      <Filter>Файлы ресурсов</Filter>
+    </ClInclude>
+    <ClInclude Include="Resourceidentifiers.h">
+      <Filter>Файлы ресурсов</Filter>
+    </ClInclude>
+    <ClInclude Include="menu.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyXML\tinystr.h">
+      <Filter>Файлы ресурсов\TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyXML\tinyxml.h">
+      <Filter>Файлы ресурсов\TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="Level.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="BackGround.jpg">
+      <Filter>Файлы ресурсов\Data</Filter>
+    </Image>
+    <Image Include="CheckPicture.jpg">
+      <Filter>Файлы ресурсов\Data</Filter>
+    </Image>
+    <Image Include="Exit.png">
+      <Filter>Файлы ресурсов\Data</Filter>
+    </Image>
+    <Image Include="NewGame.png">
+      <Filter>Файлы ресурсов\Data</Filter>
+    </Image>
+    <Image Include="Options.png">
+      <Filter>Файлы ресурсов\Data</Filter>
+    </Image>
+    <Image Include="tileset.png">
+      <Filter>Файлы ресурсов\Data</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="map.tmx">
+      <Filter>Файлы ресурсов\Data</Filter>
+    </None>
+    <None Include="tileset.tsx">
+      <Filter>Файлы ресурсов\Data</Filter>
+    </None>
+  </ItemGroup>
+</Project>

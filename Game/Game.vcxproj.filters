@@ -70,9 +70,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="BackGround.jpg">
-      <Filter>Файлы ресурсов\Data</Filter>
-    </Image>
     <Image Include="CheckPicture.jpg">
       <Filter>Файлы ресурсов\Data</Filter>
     </Image>
@@ -92,6 +89,12 @@
       <Filter>Файлы ресурсов\Data</Filter>
     </Image>
     <Image Include="player.png">
+      <Filter>Файлы ресурсов\Data</Filter>
+    </Image>
+    <Image Include="BackGround.jpg">
+      <Filter>Файлы ресурсов\Data</Filter>
+    </Image>
+    <Image Include="easyEnemy.png">
       <Filter>Файлы ресурсов\Data</Filter>
     </Image>
   </ItemGroup>

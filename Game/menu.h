@@ -37,11 +37,11 @@ public:
 
 class Player :public Entity {
 public:
-	enum { left, right, up, down, jump, stay } state;
+	enum { left, right, up, down, stay } state;
 	int playerScore;
 
 	Player(Image &image, String Name, Level &lvl, float X, float Y, int W, int H) :Entity(image, Name, X, Y, W, H) {
-		playerScore = 0; state = stay; obj = lvl.GetAllObjects();
+		playerScore = 0; obj = lvl.GetAllObjects();
 		if (name == "player") {
 			sprite.setTextureRect(IntRect(0, 0, w, h));
 		}
@@ -52,16 +52,22 @@ public:
 			if (Keyboard::isKeyPressed(Keyboard::Left)) {
 				state = left; speed = 0.1;
 			}
+
 			if (Keyboard::isKeyPressed(Keyboard::Right)) {
 				state = right; speed = 0.1;
 			}
 
 			if (Keyboard::isKeyPressed(Keyboard::Up)) {
-				state = jump; dy = -0.1;
+				state = up;  speed = 0.1;
 			}
 
 			if (Keyboard::isKeyPressed(Keyboard::Down)) {
-				state = jump; dy = 0.1;
+				state = down;  speed = 0.1;
+			}
+
+			if (!Keyboard::isKeyPressed(Keyboard::Left) && !Keyboard::isKeyPressed(Keyboard::Right)
+				&& !Keyboard::isKeyPressed(Keyboard::Up) && !Keyboard::isKeyPressed(Keyboard::Down)) {
+				state = stay;
 			}
 		}
 	}
@@ -88,9 +94,9 @@ public:
 		{
 		case right: dx = speed; break;
 		case left: dx = -speed; break;
-		case up: dy = speed; break;
+		case up: dy = -speed; break;
 		case down: dy = speed; break;
-		case stay: break;
+		case stay: dx = 0; dy = 0; break;
 		}
 		x += dx * time;
 		checkCollisionWithMap(dx, 0);
@@ -101,7 +107,6 @@ public:
 		if (!isMove) { speed = 0; }
 		setPlayerCoordinateForView(x, y);
 		if (life) { setPlayerCoordinateForView(x, y); }
-		//dy = dy + 0.0015 * time;
 	}
 };
 
@@ -111,7 +116,7 @@ class Enemy :public Entity {
 public:
 	Enemy(Image &image, String Name, Level &lvl, float X, float Y, int W, int H) :Entity(image, Name, X, Y, W, H) {
 		obj = lvl.GetObjects("solid");
-		if (name == "EasyEnemy") {
+		if (name == "easyEnemy") {
 			sprite.setTextureRect(IntRect(0, 0, w, h));
 			dx = 0.1;
 		}
@@ -133,7 +138,7 @@ public:
 
 	void update(float time)
 	{
-		if (name == "EasyEnemy") {
+		if (name == "easyEnemy") {
 			checkCollisionWithMap(dx, 0);
 			x += dx * time;
 			sprite.setPosition(x + w / 2, y + h / 2);
@@ -162,9 +167,9 @@ void menu(sf::RenderWindow & window) {
 	bool isMenu = 1;
 	int menuNum = 0;
 
-	spriteNewGame.setPosition(10, 530);
-	spriteOptions.setPosition(10, 570);
-	spriteExit.setPosition(10, 610);
+	spriteNewGame.setPosition(10, 580);
+	spriteOptions.setPosition(10, 620);
+	spriteExit.setPosition(10, 660);
 
 	while (isMenu)
 	{
@@ -175,17 +180,17 @@ void menu(sf::RenderWindow & window) {
 		menuNum = 0;
 		window.clear(sf::Color::White);
 
-		if (sf::IntRect(30, 550, 160, 40).contains(sf::Mouse::getPosition(window))) {
+		if (sf::IntRect(30, 600, 160, 40).contains(sf::Mouse::getPosition(window))) {
 			spriteNewGame.setColor(sf::Color(135, 34, 34));
 			menuNum = 1;
 		}
 
-		if (sf::IntRect(30, 590, 115, 40).contains(sf::Mouse::getPosition(window))) {
+		if (sf::IntRect(30, 640, 115, 40).contains(sf::Mouse::getPosition(window))) {
 			spriteOptions.setColor(sf::Color(135, 34, 34));
 			menuNum = 2;
 		}
 
-		if (sf::IntRect(30, 630, 65, 40).contains(sf::Mouse::getPosition(window))) {
+		if (sf::IntRect(30, 680, 65, 40).contains(sf::Mouse::getPosition(window))) {
 			spriteExit.setColor(sf::Color(135, 34, 34));
 			menuNum = 3;
 		}
@@ -199,13 +204,18 @@ void menu(sf::RenderWindow & window) {
 				Image heroImage;
 				heroImage.loadFromFile("player.png");
 
+				Image easyEnemyImage;
+				easyEnemyImage.loadFromFile("easyEnemy.png");
+
 				Object player = level.GetObject("player");
+				Object easyEnemyObject = level.GetObject("easyEnemy");
 
 				Player p(heroImage, "player", level, player.rect.left, player.rect.top, 32, 32);
+				Enemy easyEnemy(easyEnemyImage, "easyEnemy", level, easyEnemyObject.rect.left, easyEnemyObject.rect.top, 32, 32);
 
 				Clock clock;
 
-				window.create(sf::VideoMode(1280, 800), "Level - 1");
+				//window.create(sf::VideoMode(1280, 800), "Level - 1");
 
 				while (window.isOpen()) {
 
@@ -222,9 +232,11 @@ void menu(sf::RenderWindow & window) {
 							window.close();
 					}
 					p.update(time);
+					easyEnemy.update(time);
 					window.clear();
 					level.Draw(window);
 					window.draw(p.sprite);
+					window.draw(easyEnemy.sprite);
 					window.display();
 				}
 

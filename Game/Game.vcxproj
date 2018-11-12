@@ -152,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="BackGround.jpg" />
+    <Image Include="bullet.png" />
     <Image Include="CheckPicture.jpg" />
     <Image Include="easyEnemy.png" />
     <Image Include="Exit.png" />

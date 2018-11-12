@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="40" height="25" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="29">
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="40" height="25" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="35">
  <tileset firstgid="1" source="tileset.tsx"/>
  <layer id="5" name="Ground" width="40" height="25">
   <data>
@@ -1023,5 +1023,10 @@
   <object id="17" name="solid" x="66" y="128" width="92" height="126"/>
   <object id="18" name="player" x="96" y="704" width="34" height="34"/>
   <object id="20" name="easyEnemy" x="478" y="382" width="36" height="36"/>
+  <object id="30" name="solid" x="-2" y="0.0154589" width="2" height="799.925"/>
+  <object id="31" name="solid" x="0" y="800" width="1279.9" height="1.17778"/>
+  <object id="32" name="solid" x="1279.99" y="0.00804167" width="2" height="800.152"/>
+  <object id="33" name="solid" x="0.0118056" y="-1.175" width="1279.9" height="1.17778"/>
+  <object id="34" name="easyEnemy" x="608" y="288.25" width="32.25" height="31.75"/>
  </objectgroup>
 </map>

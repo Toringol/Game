@@ -97,6 +97,9 @@
     <Image Include="easyEnemy.png">
       <Filter>Файлы ресурсов\Data</Filter>
     </Image>
+    <Image Include="bullet.png">
+      <Filter>Файлы ресурсов\Data</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="map.tmx">

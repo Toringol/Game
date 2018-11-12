@@ -1,6 +1,8 @@
 #ifndef GAME_MENU_H
 #define GAME_MENU_H
 
+#include <list>
+
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -29,6 +31,8 @@ public:
 		sprite.setTexture(texture);
 		sprite.setOrigin(w / 2, h / 2);
 	}
+	
+	virtual void update(float time) = 0;
 
 	FloatRect getRect() {
 		return FloatRect(x, y, w, h);
@@ -39,6 +43,7 @@ class Player :public Entity {
 public:
 	enum { left, right, up, down, stay } state;
 	int playerScore;
+	bool isShoot;
 
 	Player(Image &image, String Name, Level &lvl, float X, float Y, int W, int H) :Entity(image, Name, X, Y, W, H) {
 		playerScore = 0; obj = lvl.GetAllObjects();
@@ -69,6 +74,9 @@ public:
 				&& !Keyboard::isKeyPressed(Keyboard::Up) && !Keyboard::isKeyPressed(Keyboard::Down)) {
 				state = stay;
 			}
+
+			/*if (Mouse::isButtonPressed(Mouse::Left)) {
+			}*/
 		}
 	}
 
@@ -110,6 +118,47 @@ public:
 	}
 };
 
+class Bullet :public Entity {
+public:
+	int direction;
+
+	Bullet(Image &image, String Name, Level &lvl, float X, float Y, int W, int H, int dir) :Entity(image, Name, X, Y, W, H) {
+		obj = lvl.GetObjects("solid");
+		x = X;
+		y = Y;
+		direction = dir;
+		speed = 0.8;
+		w = h = 16;
+		life = true;
+	
+	}
+
+
+	void update(float time)
+	{
+		switch (direction)
+		{
+		case 0: dx = -speed; dy = 0;   break;
+		case 1: dx = speed; dy = 0;   break;
+		case 2: dx = 0; dy = -speed;   break;
+		case 3: dx = 0; dy = speed;   break;
+		case 4: dx = speed; dy = 0;
+		}
+
+		x += dx * time;
+		y += dy * time;
+
+		for (int i = 0; i < obj.size(); i++) {
+			if (getRect().intersects(obj[i].rect)) 
+			{
+				life = false;
+			}
+		}
+
+		sprite.setPosition(x + w / 2, y + h / 2);
+	}
+};
+
 
 
 class Enemy :public Entity {
@@ -118,7 +167,7 @@ public:
 		obj = lvl.GetObjects("solid");
 		if (name == "easyEnemy") {
 			sprite.setTextureRect(IntRect(0, 0, w, h));
-			dx = 0.1;
+			dx = 0.3;
 		}
 	}
 
@@ -130,9 +179,10 @@ public:
 				if (obj[i].name == "solid") {
 				if (Dy > 0) { y = obj[i].rect.top - h;  dy = 0; }
 				if (Dy < 0) { y = obj[i].rect.top + obj[i].rect.height;   dy = 0; }
-				if (Dx > 0) { x = obj[i].rect.left - w;  dx = -0.1; sprite.scale(-1, 1); }
-				if (Dx < 0) { x = obj[i].rect.left + obj[i].rect.width; dx = 0.1; sprite.scale(-1, 1); }
+				if (Dx > 0) { x = obj[i].rect.left - w;  dx = -0.3; sprite.scale(-1, 1); }
+				if (Dx < 0) { x = obj[i].rect.left + obj[i].rect.width; dx = 0.3; sprite.scale(-1, 1); }
 				}
+
 			}
 	}
 
@@ -198,20 +248,31 @@ void menu(sf::RenderWindow & window) {
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
 			if (menuNum == 1) {
+
 				Level level;
 				level.LoadFromFile("map.tmx");
 				
 				Image heroImage;
-				heroImage.loadFromFile("player.png");
-
 				Image easyEnemyImage;
+				Image BulletImage;
+
+				heroImage.loadFromFile("player.png");
 				easyEnemyImage.loadFromFile("easyEnemy.png");
+				BulletImage.loadFromFile("bullet.png");
+				BulletImage.createMaskFromColor(Color(0, 0, 0));
 
 				Object player = level.GetObject("player");
-				Object easyEnemyObject = level.GetObject("easyEnemy");
 
 				Player p(heroImage, "player", level, player.rect.left, player.rect.top, 32, 32);
-				Enemy easyEnemy(easyEnemyImage, "easyEnemy", level, easyEnemyObject.rect.left, easyEnemyObject.rect.top, 32, 32);
+
+				std::list<Entity*>  entities;
+				std::list<Entity*>::iterator it;
+
+				std::vector<Object> e = level.GetObjects("easyEnemy");
+
+				for (int i = 0; i < e.size(); i++)
+					entities.push_back(new Enemy(easyEnemyImage, "easyEnemy", level, e[i].rect.left, e[i].rect.top, 32, 32));
+
 
 				Clock clock;
 
@@ -230,13 +291,25 @@ void menu(sf::RenderWindow & window) {
 					{
 						if (event.type == sf::Event::Closed)
 							window.close();
+
+						if (event.type == sf::Event::KeyPressed)
+						{
+							if (event.key.code == sf::Keyboard::P)
+							{
+								entities.push_back(new Bullet(BulletImage, "Bullet", level, p.x, p.y, 16, 16, p.state));
+							}
+						}
 					}
+
 					p.update(time);
-					easyEnemy.update(time);
+					for (it = entities.begin(); it != entities.end(); it++) { (*it)->update(time); }
 					window.clear();
 					level.Draw(window);
+
+					for (it = entities.begin(); it != entities.end(); it++) {
+						window.draw((*it)->sprite);
+					}
 					window.draw(p.sprite);
-					window.draw(easyEnemy.sprite);
 					window.display();
 				}
 
